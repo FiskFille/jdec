@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+}
+
+group 'com.fiskmods.jdec'
+version project.version
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://mvn.lumine.io/repository/maven-public/"
+    }
+}
+
+dependencies {
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.mojang:datafixerupper:6.0.6'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar.dependsOn(test)
