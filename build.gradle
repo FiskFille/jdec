@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'maven-publish'
 }
 
 group 'com.fiskmods.jdec'
@@ -7,7 +8,6 @@ version project.version
 
 java {
     withSourcesJar()
-    withJavadocJar()
 }
 
 repositories {
@@ -23,6 +23,30 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = group
+            artifactId = rootProject.name
+            version = version
+            from components.java
+            pom {
+                name = rootProject.name
+                description = project.description
+            }
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username = "$repsyUsername"
+                password = "$repsyPassword"
+            }
+            url = "https://repsy.io/mvn/fiskfille/fiskmods/"
+        }
+    }
 }
 
 test {
