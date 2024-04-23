@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 @FunctionalInterface
 public interface JsonDecoder<T> {
@@ -59,21 +58,5 @@ public interface JsonDecoder<T> {
             action.accept(t);
             return t;
         };
-    }
-
-    default JsonTag<T> required(String fieldName) {
-        return JsonTag.required(this, fieldName);
-    }
-
-    default JsonTag<T> optionalNull(String fieldName) {
-        return JsonTag.optional(this, fieldName, (T) null);
-    }
-
-    default JsonTag<T> optional(String fieldName, T defaultValue) {
-        return JsonTag.optional(this, fieldName, defaultValue);
-    }
-
-    default JsonTag<T> optional(String fieldName, Supplier<T> defaultValue) {
-        return JsonTag.optional(this, fieldName, defaultValue);
     }
 }

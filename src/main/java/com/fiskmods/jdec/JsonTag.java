@@ -9,11 +9,11 @@ import java.util.function.Supplier;
 public interface JsonTag<T> {
     Entry<T> initEntry();
 
-    static <T> JsonTag<T> required(JsonDecoder<T> codec, String tagName) {
+    static <T> JsonTag<T> required(String tagName, JsonDecoder<T> codec) {
         return new TagImpl<>(codec, tagName);
     }
 
-    static <T> JsonTag<T> optional(JsonDecoder<T> codec, String tagName, Supplier<T> defaultValue) {
+    static <T> JsonTag<T> optionalGet(String tagName, JsonDecoder<T> codec, Supplier<T> defaultValue) {
         return new TagImpl<>(codec, tagName) {
             @Override
             public Entry<T> initEntry() {
@@ -22,13 +22,12 @@ public interface JsonTag<T> {
         };
     }
 
-    static <T> JsonTag<T> optional(JsonDecoder<T> codec, String tagName, T defaultValue) {
-        return new TagImpl<>(codec, tagName) {
-            @Override
-            public Entry<T> initEntry() {
-                return new EntryImpl().setValue(defaultValue);
-            }
-        };
+    static <T> JsonTag<T> optional(String tagName, JsonDecoder<T> codec, T defaultValue) {
+        return optionalGet(tagName, codec, () -> defaultValue);
+    }
+
+    static <T> JsonTag<T> optionalNullable(String tagName, JsonDecoder<T> codec) {
+        return optional(tagName, codec, null);
     }
 
     @FunctionalInterface
@@ -57,7 +56,6 @@ public interface JsonTag<T> {
                 ((EntryImpl) e).setValue(codec.read(in));
                 return true;
             }
-
             return false;
         }
 

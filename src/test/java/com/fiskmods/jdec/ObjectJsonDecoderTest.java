@@ -11,7 +11,7 @@ class ObjectJsonDecoderTest {
     @Test
     void singleTagRequired() throws IOException {
         JsonDecoder<TestObjectSingle> codec = ObjectJsonDecoder.single(TestObjectSingle::new,
-                Jdec.STRICT_INT.required("count"));
+                JsonTag.required("count", Jdec.STRICT_INT));
 
         assertEquals(43, TestUtils.deserialize(codec, "{ \"count\": 43 }").num);
         assertThrows(JsonDecoderException.class,
@@ -23,7 +23,7 @@ class ObjectJsonDecoderTest {
     @Test
     void singleTagOptional() throws IOException {
         JsonDecoder<TestObjectSingle> codec = ObjectJsonDecoder.single(TestObjectSingle::new,
-                Jdec.STRICT_INT.optional("count", -1));
+                JsonTag.optional("count", Jdec.STRICT_INT, -1));
 
         assertEquals(43, TestUtils.deserialize(codec, "{ \"count\": 43 }").num);
         assertEquals(-1, TestUtils.deserialize(codec, "{ \"other\": 44 }").num);
@@ -33,7 +33,7 @@ class ObjectJsonDecoderTest {
     @Test
     void singleTagOptionalNull() throws IOException {
         JsonDecoder<TestObjectSingle> codec = ObjectJsonDecoder.single(TestObjectSingle::new,
-                Jdec.STRICT_INT.optionalNull("count"));
+                JsonTag.optionalNullable("count", Jdec.STRICT_INT));
 
         assertEquals(43, TestUtils.deserialize(codec, "{ \"count\": 43 }").num);
         assertNull(TestUtils.deserialize(codec, "{ \"other\": 44 }").num);
@@ -43,8 +43,8 @@ class ObjectJsonDecoderTest {
     @Test
     void groupTagRequired() throws IOException {
         JsonDecoder<TestObjectGroup> codec = ObjectJsonDecoder.group(TestObjectGroup::new,
-                Jdec.STRICT_INT.required("count"),
-                Jdec.STRING.optional("name", "unknown"));
+                JsonTag.required("count", Jdec.STRICT_INT),
+                JsonTag.optional("name", Jdec.STRING, "unknown"));
 
         TestObjectGroup obj = TestUtils.deserialize(codec, "{ \"count\": 43 }");
         assertEquals(43, obj.num);
@@ -58,8 +58,8 @@ class ObjectJsonDecoderTest {
     @Test
     void groupTagOptional() throws IOException {
         JsonDecoder<TestObjectGroup> codec = ObjectJsonDecoder.group(TestObjectGroup::new,
-                Jdec.STRICT_INT.optional("count", -1),
-                Jdec.STRING.optional("name", "unknown"));
+                JsonTag.optional("count", Jdec.STRICT_INT, -1),
+                JsonTag.optional("name", Jdec.STRING, "unknown"));
 
         TestObjectGroup obj = TestUtils.deserialize(codec, "{ \"count\": 43 }");
         assertEquals(43, obj.num);
@@ -71,8 +71,8 @@ class ObjectJsonDecoderTest {
     @Test
     void groupTagOptionalNull() throws IOException {
         JsonDecoder<TestObjectGroup> codec = ObjectJsonDecoder.group(TestObjectGroup::new,
-                Jdec.STRICT_INT.optionalNull("count"),
-                Jdec.STRING.optional("name", "unknown"));
+                JsonTag.optionalNullable("count", Jdec.STRICT_INT),
+                JsonTag.optional("name", Jdec.STRING, "unknown"));
 
         TestObjectGroup obj = TestUtils.deserialize(codec, "{ \"count\": 43 }");
         assertEquals(43, obj.num);

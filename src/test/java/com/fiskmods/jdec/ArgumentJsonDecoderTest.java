@@ -14,7 +14,7 @@ class ArgumentJsonDecoderTest {
     void argumentFromTag() throws IOException {
         ArgumentJsonDecoder<Color, Car> codec = ArgumentJsonDecoder.fromTag(
                 color -> ObjectJsonDecoder.group(Car::new,
-                        EnumJsonDecoder.of(Brand.class).required("brand"),
+                        JsonTag.required("brand", EnumJsonDecoder.of(Brand.class)),
                         color));
 
         var obj = TestUtils.deserialize(codec.with(Color.BLUE), "{ \"brand\": \"VOLVO\" }");
@@ -26,7 +26,7 @@ class ArgumentJsonDecoderTest {
     void argumentFromTagWorksMultipleTimes() throws IOException {
         ArgumentJsonDecoder<Color, Car> codec = ArgumentJsonDecoder.fromTag(
                 color -> ObjectJsonDecoder.group(Car::new,
-                        EnumJsonDecoder.of(Brand.class).required("brand"),
+                        JsonTag.required("brand", EnumJsonDecoder.of(Brand.class)),
                         color));
 
         var obj = TestUtils.deserialize(codec.with(Color.BLUE), "{ \"brand\": \"VOLVO\" }");
@@ -42,8 +42,8 @@ class ArgumentJsonDecoderTest {
     void argumentFromValue() throws IOException {
         ArgumentJsonDecoder<Color, Car> codec = ArgumentJsonDecoder.fromValue(
                 color -> ObjectJsonDecoder.group(Car::new,
-                        EnumJsonDecoder.of(Brand.class).required("brand"),
-                        EnumJsonDecoder.of(Color.class).optional("color", color::resolve)));
+                        JsonTag.required("brand", EnumJsonDecoder.of(Brand.class)),
+                        JsonTag.optionalGet("color", EnumJsonDecoder.of(Color.class), color::resolve)));
 
         var obj = TestUtils.deserialize(codec.with(Color.BLUE), "{ \"brand\": \"VOLVO\" }");
         assertEquals(Brand.VOLVO, obj.brand);
@@ -54,8 +54,8 @@ class ArgumentJsonDecoderTest {
     void argumentFromValueWorksMultipleTimes() throws IOException {
         ArgumentJsonDecoder<Color, Car> codec = ArgumentJsonDecoder.fromValue(
                 color -> ObjectJsonDecoder.group(Car::new,
-                        EnumJsonDecoder.of(Brand.class).required("brand"),
-                        EnumJsonDecoder.of(Color.class).optional("color", color::resolve)));
+                        JsonTag.required("brand", EnumJsonDecoder.of(Brand.class)),
+                        JsonTag.optionalGet("color", EnumJsonDecoder.of(Color.class), color::resolve)));
 
         var obj = TestUtils.deserialize(codec.with(Color.BLUE), "{ \"brand\": \"VOLVO\" }");
         assertEquals(Brand.VOLVO, obj.brand);
@@ -70,13 +70,13 @@ class ArgumentJsonDecoderTest {
     void argumentFromValueWithArgumentAsInput() throws IOException {
         ArgumentJsonDecoder<Color, Car> car = ArgumentJsonDecoder.fromValue(
                 color -> ObjectJsonDecoder.group(Car::new,
-                        EnumJsonDecoder.of(Brand.class).required("brand"),
-                        EnumJsonDecoder.of(Color.class).optional("color", color::resolve)));
+                        JsonTag.required("brand", EnumJsonDecoder.of(Brand.class)),
+                        JsonTag.optionalGet("color", EnumJsonDecoder.of(Color.class), color::resolve)));
 
         ArgumentJsonDecoder<Color, Factory> codec = ArgumentJsonDecoder.fromValue(
                 color -> ObjectJsonDecoder.group(Factory::new,
-                        car.with(color).required("car"),
-                        Jdec.STRICT_INT.required("workers")));
+                        JsonTag.required("car", car.with(color)),
+                        JsonTag.required("workers", Jdec.STRICT_INT)));
 
         var obj = TestUtils.deserialize(codec.with(Color.BLUE), """
                 {
@@ -95,13 +95,13 @@ class ArgumentJsonDecoderTest {
     void argumentFromValueWithArgumentAsInputWorksMultipleTimes() throws IOException {
         ArgumentJsonDecoder<Color, Car> car = ArgumentJsonDecoder.fromValue(
                 color -> ObjectJsonDecoder.group(Car::new,
-                        EnumJsonDecoder.of(Brand.class).required("brand"),
-                        EnumJsonDecoder.of(Color.class).optional("color", color::resolve)));
+                        JsonTag.required("brand", EnumJsonDecoder.of(Brand.class)),
+                        JsonTag.optionalGet("color", EnumJsonDecoder.of(Color.class), color::resolve)));
 
         ArgumentJsonDecoder<Color, Factory> codec = ArgumentJsonDecoder.fromValue(
                 color -> ObjectJsonDecoder.group(Factory::new,
-                        car.with(color).required("car"),
-                        Jdec.STRICT_INT.required("workers")));
+                        JsonTag.required("car", car.with(color)),
+                        JsonTag.required("workers", Jdec.STRICT_INT)));
 
         var obj = TestUtils.deserialize(codec.with(Color.BLUE), """
                 {
@@ -132,8 +132,8 @@ class ArgumentJsonDecoderTest {
     void map() throws IOException {
         ArgumentJsonDecoder<Color, Car> car = ArgumentJsonDecoder.fromValue(
                 color -> ObjectJsonDecoder.group(Car::new,
-                        EnumJsonDecoder.of(Brand.class).required("brand"),
-                        EnumJsonDecoder.of(Color.class).optional("color", color::resolve)));
+                        JsonTag.required("brand", EnumJsonDecoder.of(Brand.class)),
+                        JsonTag.optionalGet("color", EnumJsonDecoder.of(Color.class), color::resolve)));
 
         ArgumentJsonDecoder<Color, Factory> codec = car
                 .map(t -> new Factory(t, 900));
@@ -149,8 +149,8 @@ class ArgumentJsonDecoderTest {
         var codec = ArgumentJsonDecoder.<Brand, Dealership> fromTag(
                         brand -> ObjectJsonDecoder.group(Dealership::new,
                                 brand,
-                                Jdec.STRICT_INT.required("quantity"),
-                                Jdec.STRICT_INT.required("rating")))
+                                JsonTag.required("quantity", Jdec.STRICT_INT),
+                                JsonTag.required("rating", Jdec.STRICT_INT)))
                 .or(JsonToken.NUMBER, in ->
                         new Dealership(Brand.VOLVO, in.nextInt(), 10))
                 .or(t -> t == JsonToken.NULL, in -> {
@@ -177,8 +177,8 @@ class ArgumentJsonDecoderTest {
         var codec = ArgumentJsonDecoder.<Brand, Dealership> fromTag(
                         brand -> ObjectJsonDecoder.group(Dealership::new,
                                 brand,
-                                Jdec.STRICT_INT.required("quantity"),
-                                Jdec.STRICT_INT.required("rating")))
+                                JsonTag.required("quantity", Jdec.STRICT_INT),
+                                JsonTag.required("rating", Jdec.STRICT_INT)))
                 .orArg(JsonToken.NUMBER, ArgumentJsonDecoder.fromValue(brand ->
                         in -> new Dealership(brand.resolve(), in.nextInt(), 10)))
                 .orArg(t -> t == JsonToken.BOOLEAN, ArgumentJsonDecoder.fromValue(brand ->
