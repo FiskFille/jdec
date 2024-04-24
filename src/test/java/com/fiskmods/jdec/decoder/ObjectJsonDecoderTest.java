@@ -1,6 +1,10 @@
-package com.fiskmods.jdec;
+package com.fiskmods.jdec.decoder;
 
+import com.fiskmods.jdec.Jdec;
+import com.fiskmods.jdec.TestUtils;
 import com.fiskmods.jdec.exception.JsonDecoderException;
+import com.fiskmods.jdec.tag.JsonTag;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -13,7 +17,7 @@ class ObjectJsonDecoderTest {
         JsonDecoder<TestObjectSingle> codec = ObjectJsonDecoder.single(TestObjectSingle::new,
                 JsonTag.required("count", Jdec.STRICT_INT));
 
-        assertEquals(43, TestUtils.deserialize(codec, "{ \"count\": 43 }").num);
+        Assertions.assertEquals(43, TestUtils.deserialize(codec, "{ \"count\": 43 }").num);
         assertThrows(JsonDecoderException.class,
                 () -> TestUtils.deserialize(codec, "{ \"other\": 44 }"));
         assertThrows(JsonDecoderException.class,

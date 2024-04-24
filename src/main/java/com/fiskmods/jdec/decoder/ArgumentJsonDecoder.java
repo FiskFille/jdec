@@ -1,5 +1,6 @@
-package com.fiskmods.jdec;
+package com.fiskmods.jdec.decoder;
 
+import com.fiskmods.jdec.tag.JsonTag;
 import com.google.gson.stream.JsonToken;
 
 import java.util.function.Function;
@@ -57,7 +58,7 @@ public interface ArgumentJsonDecoder<T, R> {
         private T value;
 
         @Override
-        public JsonTag.Entry<T> initEntry() {
+        public JsonTag.Entry<T> createEntry() {
             return () -> value;
         }
     }

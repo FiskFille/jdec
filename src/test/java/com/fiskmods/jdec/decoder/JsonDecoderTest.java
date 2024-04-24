@@ -1,5 +1,7 @@
-package com.fiskmods.jdec;
+package com.fiskmods.jdec.decoder;
 
+import com.fiskmods.jdec.Jdec;
+import com.fiskmods.jdec.TestUtils;
 import com.fiskmods.jdec.exception.JsonDecoderException;
 import com.google.gson.stream.JsonToken;
 import org.junit.jupiter.api.Test;

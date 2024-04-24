@@ -1,9 +1,8 @@
-package com.fiskmods.jdec;
+package com.fiskmods.jdec.decoder;
 
-import com.fiskmods.jdec.EnumJsonDecoder;
-import com.fiskmods.jdec.JsonDecoder;
 import com.fiskmods.jdec.TestUtils;
 import com.fiskmods.jdec.exception.JsonDecoderException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -15,7 +14,7 @@ class EnumJsonDecoderTest {
     @Test
     void enumReadsProperly() throws IOException {
         JsonDecoder<?> codec = EnumJsonDecoder.of(TestEnum.class);
-        assertEquals(TestEnum.BAR, TestUtils.deserialize(codec, "\"BAR\""));
+        Assertions.assertEquals(TestEnum.BAR, TestUtils.deserialize(codec, "\"BAR\""));
     }
 
     @Test

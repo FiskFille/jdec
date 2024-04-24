@@ -1,24 +1,28 @@
-package com.fiskmods.jdec;
+package com.fiskmods.jdec.decoder;
 
+import com.fiskmods.jdec.tag.JsonTag;
 import com.mojang.datafixers.util.*;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-@SuppressWarnings("rawtypes")
+//@SuppressWarnings("rawtypes")
 public class ObjectJsonDecoder {
-    private static <T> JsonDecoder<T> create(Function<JsonTag.Entry[], T> func, JsonTag... tags) {
+    private static <T> JsonDecoder<T> create(Function<JsonTag.Entry<?>[], T> func, JsonTag<?>... tags) {
+        for (JsonTag<?> tag : tags) {
+            tag.initTag(tags);
+        }
         return in -> {
-            JsonTag.Entry[] entries = new JsonTag.Entry[tags.length];
+            JsonTag.Entry<?>[] entries = new JsonTag.Entry[tags.length];
             for (int i = 0; i < tags.length; ++i) {
-                entries[i] = tags[i].initEntry();
+                entries[i] = tags[i].createEntry();
             }
 
             in.beginObject();
             loop: while (in.hasNext()) {
                 String name = in.nextName();
-                for (JsonTag.Entry e : entries) {
-                    if (e.tryRead(in, name)) {
+                for (JsonTag.Entry<?> e : entries) {
+                    if (e.tryRead(in, name, entries)) {
                         continue loop;
                     }
                 }
@@ -30,11 +34,12 @@ public class ObjectJsonDecoder {
     }
 
     public static <T, R> JsonDecoder<R> single(Function<T, R> func, JsonTag<T> tag) {
+        tag.initTag(null);
         return in -> {
-            JsonTag.Entry<T> e = tag.initEntry();
+            JsonTag.Entry<T> e = tag.createEntry();
             in.beginObject();
             while (in.hasNext()) {
-                if (!e.tryRead(in, in.nextName())) {
+                if (!e.tryRead(in, in.nextName(), null)) {
                     in.skipValue();
                 }
             }

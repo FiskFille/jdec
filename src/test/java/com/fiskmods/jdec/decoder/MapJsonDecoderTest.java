@@ -1,5 +1,8 @@
-package com.fiskmods.jdec;
+package com.fiskmods.jdec.decoder;
 
+import com.fiskmods.jdec.Jdec;
+import com.fiskmods.jdec.TestUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -18,7 +21,7 @@ class MapJsonDecoderTest {
         expected.put("bar", -8);
         expected.put("baz", 13);
 
-        assertEquals(expected, TestUtils.deserialize(codec, """
+        Assertions.assertEquals(expected, TestUtils.deserialize(codec, """
                 {
                   "foo": 1,
                   "baz": 13,

@@ -1,4 +1,4 @@
-package com.fiskmods.jdec;
+package com.fiskmods.jdec.decoder;
 
 import com.fiskmods.jdec.exception.JsonDecoderException;
 import com.google.gson.stream.JsonReader;

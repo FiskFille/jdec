@@ -1,6 +1,9 @@
-package com.fiskmods.jdec;
+package com.fiskmods.jdec.decoder;
 
+import com.fiskmods.jdec.Jdec;
+import com.fiskmods.jdec.TestUtils;
 import com.fiskmods.jdec.exception.JsonDecoderException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +25,7 @@ class SwitchJsonDecoderTest {
 
     @Test
     void switchBuilderMapsToDifferentValues() throws IOException {
-        assertEquals(8, TestUtils.deserialize(codec, "{ \"run\": 4 }"));
+        Assertions.assertEquals(8, TestUtils.deserialize(codec, "{ \"run\": 4 }"));
         assertEquals(4, TestUtils.deserialize(codec, "{ \"walk\": 4 }"));
         assertEquals(2, TestUtils.deserialize(codec, "{ \"sneak\": 4 }"));
     }

@@ -1,5 +1,6 @@
 package com.fiskmods.jdec;
 
+import com.fiskmods.jdec.decoder.JsonDecoder;
 import com.google.gson.stream.JsonReader;
 
 import java.io.IOException;

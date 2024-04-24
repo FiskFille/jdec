@@ -1,5 +1,8 @@
 package com.fiskmods.jdec;
 
+import com.fiskmods.jdec.decoder.FixedArrayJsonDecoder;
+import com.fiskmods.jdec.decoder.JsonDecoder;
+import com.fiskmods.jdec.decoder.ListJsonDecoder;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 

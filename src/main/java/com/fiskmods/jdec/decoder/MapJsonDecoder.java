@@ -1,4 +1,4 @@
-package com.fiskmods.jdec;
+package com.fiskmods.jdec.decoder;
 
 import java.util.HashMap;
 import java.util.Map;
