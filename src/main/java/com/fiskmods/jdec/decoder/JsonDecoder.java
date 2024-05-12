@@ -59,4 +59,11 @@ public interface JsonDecoder<T> {
             return t;
         };
     }
+
+    default JsonDecoder<T> butFirst(Runnable action) {
+        return in -> {
+            action.run();
+            return read(in);
+        };
+    }
 }
