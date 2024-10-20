@@ -13,7 +13,7 @@ java {
 repositories {
     mavenCentral()
     maven {
-        url "https://mvn.lumine.io/repository/maven-public/"
+        url "https://repo.glaremasters.me/repository/public/"
     }
 }
 

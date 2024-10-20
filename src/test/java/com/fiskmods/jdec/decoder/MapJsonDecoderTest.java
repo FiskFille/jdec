@@ -32,7 +32,7 @@ class MapJsonDecoderTest {
 
     @Test
     void differentCodecsBasedOnKey() throws IOException {
-        MapJsonDecoder<String, Object> codec = MapJsonDecoder.from(Function.identity(),
+        MapJsonDecoder<String, Object> codec = MapJsonDecoder.fromFunction(Function.identity(),
                 (String k) -> k.charAt(0) == 'b' ? Jdec.STRICT_INT.asObject() : Jdec.BOOL.asObject());
         Map<String, Object> expected = new HashMap<>();
         expected.put("foo", true);
