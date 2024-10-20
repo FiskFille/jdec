@@ -37,6 +37,10 @@ public interface ArgumentJsonDecoder<T, R> {
     @FunctionalInterface
     interface Arg<T> {
         T resolve();
+
+        default <R> Arg<R> map(Function<T, R> mappingFunction) {
+            return () -> mappingFunction.apply(resolve());
+        }
     }
 
     static <T, R> ArgumentJsonDecoder<T, R> fromTag(Function<JsonTag<T>, JsonDecoder<R>> func) {
