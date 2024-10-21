@@ -1,13 +1,13 @@
 package com.fiskmods.jdec.tag;
 
-import com.fiskmods.jdec.decoder.ArgumentJsonDecoder;
+import com.fiskmods.jdec.decoder.FunctionJsonDecoder;
 
 import java.util.function.Supplier;
 
 public class OptionalDependentJsonTag<K, V> extends DependentJsonTag<K, V> {
     private final Supplier<V> defaultValue;
 
-    OptionalDependentJsonTag(ArgumentJsonDecoder<K, V> codec, String tagName, String afterTag, Supplier<V> defaultValue) {
+    OptionalDependentJsonTag(FunctionJsonDecoder<K, V> codec, String tagName, String afterTag, Supplier<V> defaultValue) {
         super(codec, tagName, afterTag);
         this.defaultValue = defaultValue;
     }

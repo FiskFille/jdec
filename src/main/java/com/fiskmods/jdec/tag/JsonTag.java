@@ -1,6 +1,6 @@
 package com.fiskmods.jdec.tag;
 
-import com.fiskmods.jdec.decoder.ArgumentJsonDecoder;
+import com.fiskmods.jdec.decoder.FunctionJsonDecoder;
 import com.fiskmods.jdec.decoder.JsonDecoder;
 import com.google.gson.stream.JsonReader;
 
@@ -35,21 +35,21 @@ public interface JsonTag<T> {
         return optional(tagName, codec, null);
     }
 
-    static <T, U> JsonTag<T> requiredAfter(String tagName, String afterTag, ArgumentJsonDecoder<U, T> codec) {
+    static <T, U> JsonTag<T> requiredAfter(String tagName, String afterTag, FunctionJsonDecoder<U, T> codec) {
         return new DependentJsonTag<>(codec, tagName, afterTag);
     }
 
-    static <T, U> JsonTag<T> optionalGetAfter(String tagName, String afterTag, ArgumentJsonDecoder<U, T> codec,
+    static <T, U> JsonTag<T> optionalGetAfter(String tagName, String afterTag, FunctionJsonDecoder<U, T> codec,
                                               Supplier<T> defaultValue) {
         return new OptionalDependentJsonTag<>(codec, tagName, afterTag, defaultValue);
     }
 
-    static <T, U> JsonTag<T> optionalAfter(String tagName, String afterTag, ArgumentJsonDecoder<U, T> codec,
+    static <T, U> JsonTag<T> optionalAfter(String tagName, String afterTag, FunctionJsonDecoder<U, T> codec,
                                            T defaultValue) {
         return optionalGetAfter(tagName, afterTag, codec, () -> defaultValue);
     }
 
-    static <T, U> JsonTag<T> optionalNullableAfter(String tagName, String afterTag, ArgumentJsonDecoder<U, T> codec) {
+    static <T, U> JsonTag<T> optionalNullableAfter(String tagName, String afterTag, FunctionJsonDecoder<U, T> codec) {
         return optionalAfter(tagName, afterTag, codec, null);
     }
 

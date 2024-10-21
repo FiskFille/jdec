@@ -1,17 +1,17 @@
 package com.fiskmods.jdec.tag;
 
-import com.fiskmods.jdec.decoder.ArgumentJsonDecoder;
+import com.fiskmods.jdec.decoder.FunctionJsonDecoder;
 import com.google.gson.stream.JsonReader;
 
 import java.io.IOException;
 
 public class DependentJsonTag<K, V> extends AbstractJsonTag<V> {
-    private final ArgumentJsonDecoder<K, V> codec;
+    private final FunctionJsonDecoder<K, V> codec;
     private final String afterTag;
 
     private int afterIndex;
 
-    DependentJsonTag(ArgumentJsonDecoder<K, V> codec, String tagName, String afterTag) {
+    DependentJsonTag(FunctionJsonDecoder<K, V> codec, String tagName, String afterTag) {
         super(tagName);
         this.codec = codec;
         this.afterTag = afterTag;
