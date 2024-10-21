@@ -25,6 +25,22 @@ public interface BiFunctionJsonDecoder<T1, T2, R> {
         return with(() -> argument1, argument2);
     }
 
+    default FunctionJsonDecoder<T2, R> withFirst(Arg<T1> argument1) {
+        return arg -> with(argument1, arg);
+    }
+
+    default FunctionJsonDecoder<T2, R> withFirst(T1 argument1) {
+        return arg -> with(() -> argument1, arg);
+    }
+
+    default FunctionJsonDecoder<T1, R> withSecond(Arg<T2> argument2) {
+        return arg -> with(arg, argument2);
+    }
+
+    default FunctionJsonDecoder<T1, R> withSecond(T2 argument2) {
+        return arg -> with(arg, () -> argument2);
+    }
+
     default <S> BiFunctionJsonDecoder<T1, T2, S> map(Function<R, S> mappingFunction) {
         return (arg1, arg2) -> with(arg1, arg2).map(mappingFunction);
     }
