@@ -78,17 +78,20 @@ public interface BiFunctionJsonDecoder<T1, T2, R> {
         Object lock = new Object();
         return (arg1, arg2) -> in -> {
             synchronized (lock) {
-                tag1.value = arg1.resolve();
-                tag2.value = arg2.resolve();
-                return codec.read(in);
+                tag1.stack.push(arg1.resolve());
+                tag2.stack.push(arg2.resolve());
+                R res = codec.read(in);
+                tag1.stack.pop();
+                tag2.stack.pop();
+                return res;
             }
         };
     }
 
     static <T1, T2, R> BiFunctionJsonDecoder<T1, T2, R> fromValue(BiFunction<Arg<T1>, Arg<T2>, JsonDecoder<R>> func) {
         return fromTag((tag1, tag2) -> func.apply(
-                () -> ((ArgumentJsonTag<T1>) tag1).value,
-                () -> ((ArgumentJsonTag<T2>) tag2).value
+                () -> ((ArgumentJsonTag<T1>) tag1).stack.peek(),
+                () -> ((ArgumentJsonTag<T2>) tag2).stack.peek()
         ));
     }
 }

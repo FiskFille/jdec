@@ -3,6 +3,8 @@ package com.fiskmods.jdec.decoder;
 import com.fiskmods.jdec.tag.JsonTag;
 import com.google.gson.stream.JsonToken;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -48,22 +50,24 @@ public interface FunctionJsonDecoder<T, R> {
         JsonDecoder<R> codec = func.apply(tag);
         return arg -> in -> {
             synchronized (tag) {
-                tag.value = arg.resolve();
-                return codec.read(in);
+                tag.stack.push(arg.resolve());
+                R res = codec.read(in);
+                tag.stack.pop();
+                return res;
             }
         };
     }
 
     static <T, R> FunctionJsonDecoder<T, R> fromValue(Function<Arg<T>, JsonDecoder<R>> func) {
-        return fromTag(tag -> func.apply(() -> ((ArgumentJsonTag<T>) tag).value));
+        return fromTag(tag -> func.apply(() -> ((ArgumentJsonTag<T>) tag).stack.peek()));
     }
 
     class ArgumentJsonTag<T> implements JsonTag<T> {
-        T value;
+        Deque<T> stack = new ArrayDeque<>();
 
         @Override
-        public JsonTag.Entry<T> createEntry() {
-            return () -> value;
+        public Entry<T> createEntry() {
+            return stack::peek;
         }
     }
 }
