@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class FunctionJsonDecoderTest {
     @Test
     void argumentFromTag() throws IOException {
-        FunctionJsonDecoder<Color, Car> codec = FunctionJsonDecoder.fromTag(
+        FunctionJsonDecoder<Color, Car> codec = FunctionJsonDecoder.from(
                 color -> ObjectJsonDecoder.group(Car::new,
                         JsonTag.required("brand", EnumJsonDecoder.of(Brand.class)),
                         color));
@@ -27,7 +27,7 @@ class FunctionJsonDecoderTest {
 
     @Test
     void argumentFromTagWorksMultipleTimes() throws IOException {
-        FunctionJsonDecoder<Color, Car> codec = FunctionJsonDecoder.fromTag(
+        FunctionJsonDecoder<Color, Car> codec = FunctionJsonDecoder.from(
                 color -> ObjectJsonDecoder.group(Car::new,
                         JsonTag.required("brand", EnumJsonDecoder.of(Brand.class)),
                         color));
@@ -43,7 +43,7 @@ class FunctionJsonDecoderTest {
 
     @Test
     void argumentFromValue() throws IOException {
-        FunctionJsonDecoder<Color, Car> codec = FunctionJsonDecoder.fromValue(
+        FunctionJsonDecoder<Color, Car> codec = FunctionJsonDecoder.from(
                 color -> ObjectJsonDecoder.group(Car::new,
                         JsonTag.required("brand", EnumJsonDecoder.of(Brand.class)),
                         JsonTag.optionalGet("color", EnumJsonDecoder.of(Color.class), color::resolve)));
@@ -55,7 +55,7 @@ class FunctionJsonDecoderTest {
 
     @Test
     void argumentFromValueWorksMultipleTimes() throws IOException {
-        FunctionJsonDecoder<Color, Car> codec = FunctionJsonDecoder.fromValue(
+        FunctionJsonDecoder<Color, Car> codec = FunctionJsonDecoder.from(
                 color -> ObjectJsonDecoder.group(Car::new,
                         JsonTag.required("brand", EnumJsonDecoder.of(Brand.class)),
                         JsonTag.optionalGet("color", EnumJsonDecoder.of(Color.class), color::resolve)));
@@ -71,12 +71,12 @@ class FunctionJsonDecoderTest {
 
     @Test
     void argumentFromValueWithArgumentAsInput() throws IOException {
-        FunctionJsonDecoder<Color, Car> car = FunctionJsonDecoder.fromValue(
+        FunctionJsonDecoder<Color, Car> car = FunctionJsonDecoder.from(
                 color -> ObjectJsonDecoder.group(Car::new,
                         JsonTag.required("brand", EnumJsonDecoder.of(Brand.class)),
                         JsonTag.optionalGet("color", EnumJsonDecoder.of(Color.class), color::resolve)));
 
-        FunctionJsonDecoder<Color, Factory> codec = FunctionJsonDecoder.fromValue(
+        FunctionJsonDecoder<Color, Factory> codec = FunctionJsonDecoder.from(
                 color -> ObjectJsonDecoder.group(Factory::new,
                         JsonTag.required("car", car.with(color)),
                         JsonTag.required("workers", Jdec.STRICT_INT)));
@@ -96,12 +96,12 @@ class FunctionJsonDecoderTest {
 
     @Test
     void argumentFromValueWithArgumentAsInputWorksMultipleTimes() throws IOException {
-        FunctionJsonDecoder<Color, Car> car = FunctionJsonDecoder.fromValue(
+        FunctionJsonDecoder<Color, Car> car = FunctionJsonDecoder.from(
                 color -> ObjectJsonDecoder.group(Car::new,
                         JsonTag.required("brand", EnumJsonDecoder.of(Brand.class)),
                         JsonTag.optionalGet("color", EnumJsonDecoder.of(Color.class), color::resolve)));
 
-        FunctionJsonDecoder<Color, Factory> codec = FunctionJsonDecoder.fromValue(
+        FunctionJsonDecoder<Color, Factory> codec = FunctionJsonDecoder.from(
                 color -> ObjectJsonDecoder.group(Factory::new,
                         JsonTag.required("car", car.with(color)),
                         JsonTag.required("workers", Jdec.STRICT_INT)));
@@ -133,7 +133,7 @@ class FunctionJsonDecoderTest {
 
     @Test
     void map() throws IOException {
-        FunctionJsonDecoder<Color, Car> car = FunctionJsonDecoder.fromValue(
+        FunctionJsonDecoder<Color, Car> car = FunctionJsonDecoder.from(
                 color -> ObjectJsonDecoder.group(Car::new,
                         JsonTag.required("brand", EnumJsonDecoder.of(Brand.class)),
                         JsonTag.optionalGet("color", EnumJsonDecoder.of(Color.class), color::resolve)));
@@ -149,7 +149,7 @@ class FunctionJsonDecoderTest {
 
     @Test
     void orWithoutArgument() throws IOException {
-        var codec = FunctionJsonDecoder.<Brand, Dealership> fromTag(
+        var codec = FunctionJsonDecoder.<Brand, Dealership> from(
                         brand -> ObjectJsonDecoder.group(Dealership::new,
                                 brand,
                                 JsonTag.required("quantity", Jdec.STRICT_INT),
@@ -177,14 +177,14 @@ class FunctionJsonDecoderTest {
 
     @Test
     void orWithArgument() throws IOException {
-        var codec = FunctionJsonDecoder.<Brand, Dealership> fromTag(
+        var codec = FunctionJsonDecoder.<Brand, Dealership> from(
                         brand -> ObjectJsonDecoder.group(Dealership::new,
                                 brand,
                                 JsonTag.required("quantity", Jdec.STRICT_INT),
                                 JsonTag.required("rating", Jdec.STRICT_INT)))
-                .orArg(JsonToken.NUMBER, FunctionJsonDecoder.fromValue(brand ->
+                .orArg(JsonToken.NUMBER, FunctionJsonDecoder.from(brand ->
                         in -> new Dealership(brand.resolve(), in.nextInt(), 10)))
-                .orArg(t -> t == JsonToken.BOOLEAN, FunctionJsonDecoder.fromValue(brand ->
+                .orArg(t -> t == JsonToken.BOOLEAN, FunctionJsonDecoder.from(brand ->
                         in -> new Dealership(brand.resolve(), in.nextBoolean() ? 0 : 19, 3)));
 
         var obj = TestUtils.deserialize(codec.with(Brand.FORD),

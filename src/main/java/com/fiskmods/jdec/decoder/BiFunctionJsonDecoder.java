@@ -2,7 +2,6 @@ package com.fiskmods.jdec.decoder;
 
 import com.fiskmods.jdec.decoder.FunctionJsonDecoder.Arg;
 import com.fiskmods.jdec.decoder.FunctionJsonDecoder.ArgumentJsonTag;
-import com.fiskmods.jdec.tag.JsonTag;
 import com.google.gson.stream.JsonToken;
 
 import java.util.function.BiFunction;
@@ -71,7 +70,8 @@ public interface BiFunctionJsonDecoder<T1, T2, R> {
                 : with(arg1, arg2).read(in);
     }
 
-    static <T1, T2, R> BiFunctionJsonDecoder<T1, T2, R> fromTag(BiFunction<JsonTag<T1>, JsonTag<T2>, JsonDecoder<R>> func) {
+    static <T1, T2, R> BiFunctionJsonDecoder<T1, T2, R> from(
+            BiFunction<ArgumentJsonTag<T1>, ArgumentJsonTag<T2>, JsonDecoder<R>> func) {
         ArgumentJsonTag<T1> tag1 = new ArgumentJsonTag<>();
         ArgumentJsonTag<T2> tag2 = new ArgumentJsonTag<>();
         JsonDecoder<R> codec = func.apply(tag1, tag2);
@@ -86,12 +86,5 @@ public interface BiFunctionJsonDecoder<T1, T2, R> {
                 return res;
             }
         };
-    }
-
-    static <T1, T2, R> BiFunctionJsonDecoder<T1, T2, R> fromValue(BiFunction<Arg<T1>, Arg<T2>, JsonDecoder<R>> func) {
-        return fromTag((tag1, tag2) -> func.apply(
-                () -> ((ArgumentJsonTag<T1>) tag1).stack.peek(),
-                () -> ((ArgumentJsonTag<T2>) tag2).stack.peek()
-        ));
     }
 }

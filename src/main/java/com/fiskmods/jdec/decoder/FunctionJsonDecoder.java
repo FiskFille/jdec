@@ -45,7 +45,7 @@ public interface FunctionJsonDecoder<T, R> {
         }
     }
 
-    static <T, R> FunctionJsonDecoder<T, R> fromTag(Function<JsonTag<T>, JsonDecoder<R>> func) {
+    static <T, R> FunctionJsonDecoder<T, R> from(Function<ArgumentJsonTag<T>, JsonDecoder<R>> func) {
         ArgumentJsonTag<T> tag = new ArgumentJsonTag<>();
         JsonDecoder<R> codec = func.apply(tag);
         return arg -> in -> {
@@ -58,16 +58,17 @@ public interface FunctionJsonDecoder<T, R> {
         };
     }
 
-    static <T, R> FunctionJsonDecoder<T, R> fromValue(Function<Arg<T>, JsonDecoder<R>> func) {
-        return fromTag(tag -> func.apply(() -> ((ArgumentJsonTag<T>) tag).stack.peek()));
-    }
-
-    class ArgumentJsonTag<T> implements JsonTag<T> {
+    class ArgumentJsonTag<T> implements JsonTag<T>, Arg<T> {
         Deque<T> stack = new ArrayDeque<>();
 
         @Override
         public Entry<T> createEntry() {
-            return stack::peek;
+            return this::resolve;
+        }
+
+        @Override
+        public T resolve() {
+            return stack.peek();
         }
     }
 }
